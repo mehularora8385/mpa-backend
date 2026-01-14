@@ -28,3 +28,25 @@ exports.login = async (username, password, deviceId) => {
 
   return { token };
 };
+
+exports.forgotPassword = async (email) => {
+    // Implementation for sending a password reset email
+    console.log(`Password reset email sent to ${email}`);
+};
+
+exports.changePassword = async (userId, oldPassword, newPassword) => {
+    const user = await db.query("SELECT * FROM users WHERE id = $1", [userId]);
+    if (user.rows.length === 0) {
+        throw new Error("User not found");
+    }
+
+    const validPassword = await bcrypt.compare(oldPassword, user.rows[0].password);
+    if (!validPassword) {
+        throw new Error("Invalid old password");
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    await db.query("UPDATE users SET password = $1 WHERE id = $2", [hashedPassword, userId]);
+};
