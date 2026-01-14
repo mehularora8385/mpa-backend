@@ -5,6 +5,9 @@ const HOST = process.env.HOST || '0.0.0.0';
 // Initialize database connection
 const db = require('./config/database');
 
+// Initialize WebSocket handler
+const wsHandler = require('./websocket/handler');
+
 // Sync database models
 db.sync({ alter: false })
   .then(() => {
@@ -26,9 +29,13 @@ const server = app.listen(PORT, HOST, () => {
 ║  Port: ${PORT.toString().padEnd(47)}║
 ║  URL: http://${HOST}:${PORT}                              ║
 ║  API Base: http://${HOST}:${PORT}/api                     ║
+║  WebSocket: ws://${HOST}:${PORT}                          ║
 ║                                                            ║
 ╚════════════════════════════════════════════════════════════╝
   `);
+
+  // Initialize WebSocket server for real-time communication
+  wsHandler.initialize(server);
 });
 
 // Graceful shutdown
