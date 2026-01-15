@@ -28,20 +28,24 @@ const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/user");
 const centreRoutes = require("./routes/centre");
 const biometricRoutes = require("./routes/biometric");
-const operatorRoutes = require("./routes/operator");
+const operatorRoutes = require("./routes/operatorRoutes");
 const attendanceRoutes = require("./routes/attendance");
 const logRoutes = require("./routes/log");
 const backupRoutes = require("./routes/backup");
+const livePasswordRoutes = require("./routes/livePasswordRoutes");
+const slotRoutes = require("./routes/slotRoutes");
 
 // Mount routes with /api/ prefix (not /api/v1/)
-app.use("/api/auth", authRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/centres", centreRoutes);
-app.use("/api/biometric", biometricRoutes);
-app.use("/api/operators", operatorRoutes);
-app.use("/api/attendance", attendanceRoutes);
-app.use("/api/logs", logRoutes);
-app.use("/api/backup", backupRoutes);
+app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/centres", centreRoutes);
+app.use("/api/v1/biometric", biometricRoutes);
+app.use("/api/v1/operators", operatorRoutes);
+app.use("/api/v1/attendance", attendanceRoutes);
+app.use("/api/v1/logs", logRoutes);
+app.use("/api/v1/backup", backupRoutes);
+app.use("/api/v1/live-password", livePasswordRoutes);
+app.use("/api/v1/slots", slotRoutes);
 
 // Health check endpoint (without /api prefix for compatibility)
 app.get("/api/health", (req, res) => {

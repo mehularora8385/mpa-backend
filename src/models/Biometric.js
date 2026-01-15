@@ -54,8 +54,18 @@ const Biometric = db.define('Biometric', {
   reverifiedAt: {
     type: DataTypes.DATE,
     allowNull: true
+  },
+  syncTimestamp: {
+    type: DataTypes.DATE,
+    allowNull: true
   }
 }, {
+  indexes: [
+    {
+      unique: true,
+      fields: ['candidateId', 'examId']
+    }
+  ],
   tableName: 'biometrics',
   timestamps: true
 });

@@ -32,6 +32,10 @@ const Operator = db.define('Operator', {
     type: DataTypes.STRING(15),
     allowNull: true
   },
+  slotId: {
+    type: DataTypes.UUID,
+    allowNull: true
+  },
   status: {
     type: DataTypes.ENUM('active', 'inactive', 'suspended'),
     defaultValue: 'active'
