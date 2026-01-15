@@ -34,6 +34,8 @@ const logRoutes = require("./routes/log");
 const backupRoutes = require("./routes/backup");
 const livePasswordRoutes = require("./routes/livePasswordRoutes");
 const slotRoutes = require("./routes/slotRoutes");
+const shiftRoutes = require("./routes/shiftRoutes");
+const omrRoutes = require("./routes/omrRoutes");
 
 // Mount routes with /api/ prefix (not /api/v1/)
 app.use("/api/v1/auth", authRoutes);
@@ -46,6 +48,8 @@ app.use("/api/v1/logs", logRoutes);
 app.use("/api/v1/backup", backupRoutes);
 app.use("/api/v1/live-password", livePasswordRoutes);
 app.use("/api/v1/slots", slotRoutes);
+app.use("/api/v1/shifts", shiftRoutes);
+app.use("/api/v1/omr", omrRoutes);
 
 // Health check endpoint (without /api prefix for compatibility)
 app.get("/api/health", (req, res) => {

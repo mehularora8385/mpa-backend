@@ -1,14 +1,22 @@
 const Biometric = require("../models/Biometric");
 const Attendance = require("../models/Attendance");
 const Candidate = require("../models/Candidate");
+const Slot = require("../models/Slot");
 const faceMatchService = require("../services/faceMatchService");
 
 const FACE_MATCH_THRESHOLD = 80.0;
 
 exports.captureBiometric = async (req, res, next) => {
   try {
-    const { candidateId, examId, operatorId, faceImage, fingerprintTemplate } = req.body;
+    const { candidateId, examId, operatorId, faceImage, fingerprintTemplate, slotId } = req.body;
 
+    // 1. Check if the shift is active
+    const activeSlot = await Slot.findOne({ where: { id: slotId, examId, status: 'ACTIVE' } });
+    if (!activeSlot) {
+      return res.status(403).json({ success: false, message: "Shift is not active. Biometric capture is not allowed." });
+    }
+
+    // 2. Check for attendance
     const attendance = await Attendance.findOne({ where: { candidateId, examId, present: true } });
     if (!attendance) {
       return res.status(403).json({ success: false, message: "Attendance not marked. Biometric capture is not allowed." });
@@ -62,16 +70,6 @@ exports.verifyBiometric = async (req, res, next) => {
       matchPercentage: biometric.matchPercentage
     });
 
-  } catch (error) {
-    next(error);
-  }
-};
-
-exports.reverify = async (req, res, next) => {
-  try {
-    const { verificationId, biometricData } = req.body;
-    const result = await biometricService.reverify(verificationId, biometricData);
-    res.json(result);
   } catch (error) {
     next(error);
   }

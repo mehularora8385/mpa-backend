@@ -1,11 +1,15 @@
 const { DataTypes } = require('sequelize');
-const db = require('../config/database');
+const sequelize = require('../config/database');
 
-const Slot = db.define('Slot', {
+const Slot = sequelize.define('Slot', {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true
+  },
+  status: {
+    type: DataTypes.ENUM('PENDING', 'ACTIVE', 'COMPLETED', 'LOCKED'),
+    defaultValue: 'PENDING'
   },
   examId: {
     type: DataTypes.UUID,
