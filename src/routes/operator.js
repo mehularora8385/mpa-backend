@@ -7,10 +7,22 @@ const authMiddleware = require("../middlewares/authMiddleware");
 // Public routes
 router.post("/login", authController.operatorLogin);
 router.post("/check-duplicate", authController.checkDuplicate);
-
-// Protected routes
-router.post("/upload", authMiddleware, operatorController.bulkUpload);
-router.post("/logout", authMiddleware, authController.logout);
 router.post("/refresh-token", authController.refreshToken);
+
+// Protected routes (require authentication)
+router.use(authMiddleware);
+
+// Operator CRUD operations
+router.get("/", operatorController.getAllOperators);
+router.get("/:id", operatorController.getOperatorById);
+router.post("/", operatorController.createOperator);
+router.put("/:id", operatorController.updateOperator);
+router.delete("/:id", operatorController.deleteOperator);
+
+// Bulk operations
+router.post("/upload", operatorController.bulkUpload);
+
+// Logout
+router.post("/logout", authController.logout);
 
 module.exports = router;
