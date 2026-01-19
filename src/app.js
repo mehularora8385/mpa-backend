@@ -38,8 +38,32 @@ const fingerprintRoutes = require("./routes/fingerprint");
 const omrRoutes = require("./routes/omr");
 const slotRoutes = require("./routes/slot");
 const syncRoutes = require("./routes/sync");
+const examRoutes = require("./routes/examRoutes");
+const candidateRoutes = require("./routes/candidateRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
+const reportRoutes = require("./routes/reportRoutes");
 
-// Mount routes with /api/ prefix (not /api/v1/)
+// Mount routes with /api/v1/ prefix for mobile app compatibility
+app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/centres", centreRoutes);
+app.use("/api/v1/biometric", biometricRoutes);
+app.use("/api/v1/operators", operatorRoutes);
+app.use("/api/v1/attendance", attendanceRoutes);
+app.use("/api/v1/logs", logRoutes);
+app.use("/api/v1/backup", backupRoutes);
+app.use("/api/v1/download-password", downloadPasswordRoutes);
+app.use("/api/v1/face-recognition", faceRecognitionRoutes);
+app.use("/api/v1/fingerprint", fingerprintRoutes);
+app.use("/api/v1/omr", omrRoutes);
+app.use("/api/v1/slots", slotRoutes);
+app.use("/api/v1/sync", syncRoutes);
+app.use("/api/v1/exams", examRoutes);
+app.use("/api/v1/candidates", candidateRoutes);
+app.use("/api/v1/dashboard", dashboardRoutes);
+app.use("/api/v1/reports", reportRoutes);
+
+// Also mount routes with /api/ prefix for admin panel compatibility
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/centres", centreRoutes);
@@ -54,9 +78,23 @@ app.use("/api/fingerprint", fingerprintRoutes);
 app.use("/api/omr", omrRoutes);
 app.use("/api/slots", slotRoutes);
 app.use("/api/sync", syncRoutes);
+app.use("/api/exams", examRoutes);
+app.use("/api/candidates", candidateRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/reports", reportRoutes);
 
-// Health check endpoint (without /api prefix for compatibility)
+// Health check endpoints
 app.get("/api/health", (req, res) => {
+  res.json({
+    success: true,
+    status: "ok",
+    timestamp: new Date(),
+    uptime: process.uptime(),
+    version: "2.0.0"
+  });
+});
+
+app.get("/api/v1/health", (req, res) => {
   res.json({
     success: true,
     status: "ok",
