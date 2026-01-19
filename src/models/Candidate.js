@@ -91,6 +91,31 @@ const Candidate = db.define('Candidate', {
   verifiedAt: {
     type: DataTypes.DATE,
     allowNull: true
+  },
+  shift: {
+    type: DataTypes.STRING(20),
+    allowNull: true,
+    comment: 'Shift/slot timing (Morning, Evening, etc.)'
+  },
+  candidateId: {
+    type: DataTypes.STRING(50),
+    allowNull: true,
+    comment: 'Unique candidate identifier'
+  },
+  uploadedPhotoUrl: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+    comment: 'URL of uploaded photo from Excel'
+  },
+  biometricCaptured: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+    comment: 'Whether biometric data has been captured'
+  },
+  syncStatus: {
+    type: DataTypes.ENUM('Pending', 'Syncing', 'Synced', 'Failed'),
+    defaultValue: 'Pending',
+    comment: 'Sync status with central server'
   }
 }, {
   tableName: 'candidates',

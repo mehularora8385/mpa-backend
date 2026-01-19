@@ -4,7 +4,12 @@ const examController = require('../controllers/examController');
 const authMiddleware = require('../middlewares/authMiddleware');
 const upload = require('../config/upload');
 
-// All routes require authentication
+// Dashboard endpoints (no auth required for dashboard access)
+router.post('/:id/verify-dashboard', examController.verifyDashboard);
+router.get('/:id/dashboard-stats', examController.getDashboardStats);
+router.get('/:id/dashboard-candidates', examController.getDashboardCandidates);
+
+// All other routes require authentication
 router.use(authMiddleware);
 
 // Exam CRUD operations

@@ -630,4 +630,164 @@ exports.uploadCandidates = async (req, res) => {
     }
 };
 
+/**
+ * Verify dashboard credentials
+ */
+exports.verifyDashboard = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { username, password } = req.body;
+
+        const exam = await Exam.findByPk(id);
+        if (!exam) {
+            return res.status(404).json({
+                success: false,
+                error: 'Exam not found'
+            });
+        }
+
+        // Verify credentials
+        if (exam.dashboardUsername === username && exam.dashboardPassword === password) {
+            res.json({
+                success: true,
+                message: 'Login successful',
+                exam: {
+                    id: exam.id,
+                    name: exam.name,
+                    examDate: exam.examDate,
+                    status: exam.status
+                }
+            });
+        } else {
+            res.status(401).json({
+                success: false,
+                error: 'Invalid credentials'
+            });
+        }
+    } catch (error) {
+        console.error('Verify dashboard error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to verify credentials',
+            message: error.message
+        });
+    }
+};
+
+/**
+ * Get dashboard statistics for specific exam
+ */
+exports.getDashboardStats = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const exam = await Exam.findByPk(id);
+        if (!exam) {
+            return res.status(404).json({
+                success: false,
+                error: 'Exam not found'
+            });
+        }
+
+        // Get statistics
+        const totalCandidates = await Candidate.count({
+            where: { examId: id }
+        });
+
+        const registeredCandidates = await Candidate.count({
+            where: { 
+                examId: id,
+                status: 'Registered'
+            }
+        });
+
+        const verifiedCandidates = await Candidate.count({
+            where: { 
+                examId: id,
+                status: 'Verified'
+            }
+        });
+
+        const syncDoneCount = await Candidate.count({
+            where: { 
+                examId: id,
+                syncStatus: 'Synced'
+            }
+        });
+
+        res.json({
+            success: true,
+            data: {
+                totalCandidates,
+                registeredCandidates,
+                verifiedCandidates,
+                syncDoneCount
+            }
+        });
+    } catch (error) {
+        console.error('Get dashboard stats error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to get dashboard statistics',
+            message: error.message
+        });
+    }
+};
+
+/**
+ * Get dashboard candidates for specific exam with centre filter
+ */
+exports.getDashboardCandidates = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { centre } = req.query;
+
+        const exam = await Exam.findByPk(id);
+        if (!exam) {
+            return res.status(404).json({
+                success: false,
+                error: 'Exam not found'
+            });
+        }
+
+        // Build where clause
+        const whereClause = { examId: id };
+        if (centre) {
+            whereClause.centreCode = centre;
+        }
+
+        // Get candidates
+        const candidates = await Candidate.findAll({
+            where: whereClause,
+            attributes: [
+                'id', 'centreCode', 'name', 'fatherName', 'rollNo', 'omrNo',
+                'status', 'biometricCaptured', 'syncStatus'
+            ],
+            order: [['centreCode', 'ASC'], ['name', 'ASC']]
+        });
+
+        // Get unique centres
+        const centres = await Candidate.findAll({
+            where: { examId: id },
+            attributes: [[Candidate.sequelize.fn('DISTINCT', Candidate.sequelize.col('centreCode')), 'centreCode']],
+            raw: true
+        });
+
+        const centreList = centres.map(c => c.centreCode).filter(c => c);
+
+        res.json({
+            success: true,
+            data: candidates,
+            centres: centreList
+        });
+    } catch (error) {
+        console.error('Get dashboard candidates error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to get dashboard candidates',
+            message: error.message
+        });
+    }
+};
+
 module.exports = exports;
