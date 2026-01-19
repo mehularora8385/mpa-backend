@@ -28,27 +28,6 @@ exports.syncData = async (req, res, next) => {
   }
 };
 
-// Trigger sync for admin panel (broadcasts sync command to all APK instances)
-exports.triggerSync = async (req, res, next) => {
-  try {
-    // This would typically use WebSocket or push notification to trigger sync on all APKs
-    // For now, we'll return a success response
-    // The actual sync mechanism would be implemented with real-time communication
-    
-    res.json({
-      success: true,
-      message: 'Sync command sent to all devices successfully',
-      data: {
-        triggeredAt: new Date(),
-        status: 'syncing'
-      }
-    });
-    
-  } catch (error) {
-    next(error);
-  }
-};
-
 // Resolve conflict
 exports.resolveConflict = async (req, res, next) => {
   try {

@@ -9,9 +9,6 @@ router.use(authMiddleware);
 // Sync data with conflict detection
 router.post('/upload', syncConflictController.syncData);
 
-// Trigger sync (for admin panel sync button)
-router.post('/trigger', syncConflictController.triggerSync);
-
 // Resolve conflict (admin only)
 router.post('/resolve/:conflictId', syncConflictController.resolveConflict);
 

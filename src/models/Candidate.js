@@ -49,6 +49,21 @@ const Candidate = db.define('Candidate', {
     type: DataTypes.TEXT,
     allowNull: true
   },
+  enrolledFaceImage: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    comment: 'S3 URL of enrolled face image'
+  },
+  faceId: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    comment: 'AWS Rekognition face ID'
+  },
+  omrBarcode: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    comment: 'OMR barcode linked to candidate'
+  },
   fingerprintData: {
     type: DataTypes.TEXT,
     allowNull: true
@@ -66,8 +81,8 @@ const Candidate = db.define('Candidate', {
     defaultValue: false
   },
   status: {
-    type: DataTypes.ENUM('pending', 'verified', 'not_verified'),
-    defaultValue: 'pending'
+    type: DataTypes.ENUM('registered', 'attendance_completed', 'biometric_completed', 'completed'),
+    defaultValue: 'registered'
   },
   verifiedBy: {
     type: DataTypes.UUID,
@@ -76,6 +91,31 @@ const Candidate = db.define('Candidate', {
   verifiedAt: {
     type: DataTypes.DATE,
     allowNull: true
+  },
+  shift: {
+    type: DataTypes.STRING(20),
+    allowNull: true,
+    comment: 'Shift/slot timing (Morning, Evening, etc.)'
+  },
+  candidateId: {
+    type: DataTypes.STRING(50),
+    allowNull: true,
+    comment: 'Unique candidate identifier'
+  },
+  uploadedPhotoUrl: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+    comment: 'URL of uploaded photo from Excel'
+  },
+  biometricCaptured: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+    comment: 'Whether biometric data has been captured'
+  },
+  syncStatus: {
+    type: DataTypes.ENUM('Pending', 'Syncing', 'Synced', 'Failed'),
+    defaultValue: 'Pending',
+    comment: 'Sync status with central server'
   }
 }, {
   tableName: 'candidates',
