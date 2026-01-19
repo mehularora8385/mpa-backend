@@ -33,7 +33,8 @@
     "@aws-sdk/client-sns": "^3.450.0",
     "@aws-sdk/lib-dynamodb": "^3.450.0",
     "@aws-sdk/s3-request-presigner": "^3.450.0",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "nodemon": "^3.0.2",

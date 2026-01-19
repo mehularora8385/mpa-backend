@@ -31,6 +31,26 @@ const Exam = db.define('Exam', {
   status: {
     type: DataTypes.ENUM('draft', 'active', 'completed', 'cancelled'),
     defaultValue: 'draft'
+  },
+  dashboardUsername: {
+    type: DataTypes.STRING(100),
+    allowNull: true
+  },
+  dashboardPassword: {
+    type: DataTypes.STRING(100),
+    allowNull: true
+  },
+  dashboardLink: {
+    type: DataTypes.STRING(500),
+    allowNull: true
+  },
+  dashboardCreated: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+  },
+  mockActive: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
   }
 }, {
   tableName: 'exams',
