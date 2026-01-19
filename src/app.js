@@ -32,6 +32,12 @@ const operatorRoutes = require("./routes/operator");
 const attendanceRoutes = require("./routes/attendance");
 const logRoutes = require("./routes/log");
 const backupRoutes = require("./routes/backup");
+const downloadPasswordRoutes = require("./routes/downloadPassword");
+const faceRecognitionRoutes = require("./routes/faceRecognition");
+const fingerprintRoutes = require("./routes/fingerprint");
+const omrRoutes = require("./routes/omr");
+const slotRoutes = require("./routes/slot");
+const syncRoutes = require("./routes/sync");
 
 // Mount routes with /api/ prefix (not /api/v1/)
 app.use("/api/auth", authRoutes);
@@ -42,6 +48,12 @@ app.use("/api/operators", operatorRoutes);
 app.use("/api/attendance", attendanceRoutes);
 app.use("/api/logs", logRoutes);
 app.use("/api/backup", backupRoutes);
+app.use("/api/download-password", downloadPasswordRoutes);
+app.use("/api/face-recognition", faceRecognitionRoutes);
+app.use("/api/fingerprint", fingerprintRoutes);
+app.use("/api/omr", omrRoutes);
+app.use("/api/slots", slotRoutes);
+app.use("/api/sync", syncRoutes);
 
 // Health check endpoint (without /api prefix for compatibility)
 app.get("/api/health", (req, res) => {

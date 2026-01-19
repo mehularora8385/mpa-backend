@@ -7,6 +7,7 @@ const db = require('./config/database');
 
 // Initialize WebSocket handler
 const wsHandler = require('./websocket/handler');
+const { wss } = require('./websocket/server');
 
 // Sync database models
 db.sync({ alter: false })
