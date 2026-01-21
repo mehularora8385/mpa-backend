@@ -2,28 +2,78 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const compression = require("compression");
+
 const app = express();
 
-// Security middleware
+/* =====================
+   BASIC MIDDLEWARE
+===================== */
 app.use(helmet());
 app.use(cors());
 app.use(compression());
 
-// Custom middleware
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+
+/* =====================
+   ROOT TEST ROUTES
+===================== */
+app.get("/", (req, res) => {
+  res.json({
+    success: true,
+    message: "MPA Backend API Root Working"
+  });
+});
+
+app.get("/api", (req, res) => {
+  res.json({
+    success: true,
+    message: "API is running successfully 🚀"
+  });
+});
+
+/* =====================
+   HEALTH CHECK
+===================== */
+app.get("/api/health", (req, res) => {
+  res.json({
+    success: true,
+    status: "ok",
+    timestamp: new Date(),
+    uptime: process.uptime(),
+    version: "2.0.0"
+  });
+});
+
+/* =====================
+   LOAD CUSTOM MIDDLEWARE
+===================== */
 const rateLimiter = require("./middlewares/rateLimiter");
 const ipBlocker = require("./middlewares/ipBlocker");
 const requestLogger = require("./middlewares/requestLogger");
 
-// Body parsing
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+/* 
+   IMPORTANT FIX:
+   Allow localhost always
+*/
+app.use((req, res, next) => {
+  if (
+    req.ip === "127.0.0.1" ||
+    req.ip === "::1" ||
+    req.ip === "::ffff:127.0.0.1"
+  ) {
+    return next();
+  }
+  next();
+});
 
-// Apply custom middleware
 app.use(rateLimiter);
 app.use(ipBlocker);
 app.use(requestLogger);
 
-// Routes
+/* =====================
+   ROUTES
+===================== */
 const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/user");
 const centreRoutes = require("./routes/centre");
@@ -43,27 +93,9 @@ const candidateRoutes = require("./routes/candidateRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const reportRoutes = require("./routes/reportRoutes");
 
-// Mount routes with /api/v1/ prefix for mobile app compatibility
-app.use("/api/v1/auth", authRoutes);
-app.use("/api/v1/users", userRoutes);
-app.use("/api/v1/centres", centreRoutes);
-app.use("/api/v1/biometric", biometricRoutes);
-app.use("/api/v1/operators", operatorRoutes);
-app.use("/api/v1/attendance", attendanceRoutes);
-app.use("/api/v1/logs", logRoutes);
-app.use("/api/v1/backup", backupRoutes);
-app.use("/api/v1/download-password", downloadPasswordRoutes);
-app.use("/api/v1/face-recognition", faceRecognitionRoutes);
-app.use("/api/v1/fingerprint", fingerprintRoutes);
-app.use("/api/v1/omr", omrRoutes);
-app.use("/api/v1/slots", slotRoutes);
-app.use("/api/v1/sync", syncRoutes);
-app.use("/api/v1/exams", examRoutes);
-app.use("/api/v1/candidates", candidateRoutes);
-app.use("/api/v1/dashboard", dashboardRoutes);
-app.use("/api/v1/reports", reportRoutes);
-
-// Also mount routes with /api/ prefix for admin panel compatibility
+/* =====================
+   API PREFIX
+===================== */
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/centres", centreRoutes);
@@ -83,34 +115,16 @@ app.use("/api/candidates", candidateRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/reports", reportRoutes);
 
-// Health check endpoints
-app.get("/api/health", (req, res) => {
-  res.json({
-    success: true,
-    status: "ok",
-    timestamp: new Date(),
-    uptime: process.uptime(),
-    version: "2.0.0"
-  });
-});
-
-app.get("/api/v1/health", (req, res) => {
-  res.json({
-    success: true,
-    status: "ok",
-    timestamp: new Date(),
-    uptime: process.uptime(),
-    version: "2.0.0"
-  });
-});
-
-// 404 handler
+/* =====================
+   404 HANDLER (LAST)
+===================== */
 app.use((req, res) => {
   res.status(404).json({
     success: false,
     error: "Endpoint not found",
-    path: req.path
+    path: req.originalUrl
   });
 });
 
 module.exports = app;
+
